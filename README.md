@@ -37,3 +37,17 @@ $ neil new app hello-world
 
 > GraalVM compiles your Java applications ahead of time into standalone binaries that start instantly, provide peak performance with no warmup, and use fewer resources.
 
+
+
+
+## The (Clojure) "JVM Slow Startup Time" Myth ##
+
+<https://blog.ndk.io/jvm-slow-startup.html>
+
+> Conclusion: JVM startup time is not a problem. **Clojure startup time** is. But why? That’s for another post.
+
+## Why is Clojure bootstrapping so slow? ##
+
+<https://blog.ndk.io/clojure-bootstrapping.html>
+
+> So the short answer is this: Clojure programs start slowly because every Clojure program loads the main Clojure namespace `clojure.core` before executing. This takes time.
