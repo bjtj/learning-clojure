@@ -6,17 +6,17 @@
             [clojure.pprint :refer [pprint]]
             [hiccup2.core :as h]))
 
-(defn hello [{:keys [session]}]
+(defn hello [_]
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body (str (when-some [greeting (:greeting session)]
-                (str "<p>Greeting: " greeting "</p>"))
-              "<form action=\"/say\" method=\"post\">"
-              "<input name=\"greeting\"/>"
-              "<input type=\"submit\" value=\"Say\"/>"
-              "</form>")})
+   :body "Hello"})
 
-(defn hello2 [{:keys [session]}]
+(defn info [req]
+  {:status 200
+   :headers {"Content-Type" "text/plain"}
+   :body (with-out-str (pprint req))})
+
+(defn say [{:keys [session]}]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (str (h/html [:div
@@ -26,24 +26,21 @@
                         [:input {:name "greeting" :placeholder "Say something..."}]
                         [:input {:type "submit" :value "Say"}]]]))})
 
-(defn info [req]
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body (with-out-str (pprint req))})
-
 (defn say-hello-handler [{:keys [request-method params session]}]
   (when-not (= request-method :post)
     (throw (Exception. "Not allowed method")))
   (when-not (= request-method :post)
     (throw (Exception. "greeting parameter is needed.")))
-  (-> (res/redirect "/" 303)
+  (-> (res/redirect "/say" 303)
       (assoc :session (assoc session :greeting (get params "greeting")))))
 
-(defn router [{:keys [uri] :as req}]
+(defn router [{:keys [uri request-method] :as req}]
   (case uri
-    "/" (hello2 req)
+    "/" (hello req)
     "/info" (info req)
-    "/say" (say-hello-handler req)))
+    "/say" (case request-method
+             :get (say req)
+             :post (say-hello-handler req))))
 
 (defn wrap-server [handler]
   (fn [request]
@@ -58,7 +55,7 @@
       wrap-server))
 
 (defn- start-server []
-  (reset! server (run-jetty app {:port 3000 :join? false})))
+  (reset! server (run-jetty (fn [req] (app req)) {:port 3000 :join? false})))
 
 (defn- restart-server []
   (when @server
