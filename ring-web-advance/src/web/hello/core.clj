@@ -29,7 +29,7 @@
 (defn say-hello-handler [{:keys [request-method params session]}]
   (when-not (= request-method :post)
     (throw (Exception. "Not allowed method")))
-  (when-not (= request-method :post)
+  (when-not (get params "greeting")
     (throw (Exception. "greeting parameter is needed.")))
   (-> (res/redirect "/say" 303)
       (assoc :session (assoc session :greeting (get params "greeting")))))
