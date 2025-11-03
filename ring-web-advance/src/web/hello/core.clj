@@ -2,14 +2,20 @@
   (:require [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.session :refer [wrap-session]]
+            [ring.middleware.session.cookie :as cookie]
             [ring.util.response :as res]
             [clojure.pprint :refer [pprint]]
             [hiccup2.core :as h]))
 
 (defn hello [_]
   {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body "Hello"})
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body (-> [:div
+              [:h1 "Hello"]
+              [:ul
+               [:li [:a {:href "/say"} "say"]]]]
+             h/html
+             str)})
 
 (defn info [req]
   {:status 200
@@ -18,7 +24,7 @@
 
 (defn say [{:keys [session]}]
   {:status 200
-   :headers {"Content-Type" "text/html"}
+   :headers {"Content-Type" "text/html; charset=utf-8"}
    :body (str (h/html [:div
                        (when-some [greeting (:greeting session)]
                          [:p "Greeting: " greeting])
@@ -48,10 +54,15 @@
 
 (defonce server (atom nil))
 
+(defn -wrap-session [handler]
+  (wrap-session handler {:cookie-attrs {:max-age (* 60 60 24 60)
+                                        :same-site :lax
+                                        :http-only true}}))
+
 (def app
   (-> router
       wrap-params
-      wrap-session
+      -wrap-session
       wrap-server))
 
 (defn- start-server []
