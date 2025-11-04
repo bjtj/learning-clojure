@@ -13,7 +13,8 @@
    :body (-> [:div
               [:h1 "Hello"]
               [:ul
-               [:li [:a {:href "/say"} "say"]]]]
+               [:li [:a {:href "/say"} "say"]]
+               [:li [:a {:href "/info"} "info"]]]]
              h/html
              str)})
 
