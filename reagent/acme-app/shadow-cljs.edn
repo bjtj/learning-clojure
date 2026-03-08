@@ -1,0 +1,24 @@
+;; shadow-cljs configuration
+{:deps true
+ 
+ :source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ [[reagent "2.0.1"]
+  [cider/cider-nrepl "0.58.0"]]
+
+ :nrepl {:middleware [cider.nrepl/cider-middleware]}
+
+ :dev-http {3000 ["public" "target/public"]}
+
+ :builds
+ {:app
+  {:target :browser
+   :output-dir "target/public/js"
+   :asset-path "/js"
+   :devtools {:after-load app.core/init}
+   :modules {:main {:entries [app.core]
+                    :init-fn app.core/init}}}}}
