@@ -1,4 +1,4 @@
-# Reagent example
+# Re-frame example
 
 ## Setup
 
