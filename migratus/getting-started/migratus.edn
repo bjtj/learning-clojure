@@ -1,0 +1,4 @@
+{:store :database
+ :migration-dir "migrations/"
+ :db {:dbtype "h2"
+      :dbname "./migratus.db"}}
