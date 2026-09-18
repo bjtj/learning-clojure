@@ -1,0 +1,4 @@
+{:paths ["src"]
+ :deps {lib/core {:local/root "../"}}
+ :aliases
+ {:dev {:main-opts ["-m" "demo.main"]}}}
