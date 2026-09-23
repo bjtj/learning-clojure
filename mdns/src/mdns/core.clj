@@ -4,11 +4,13 @@
 
 (def jmdns (JmDNS/create (InetAddress/getLocalHost)))
 
-(defn reg-mdns-service [service-type host port text]
-  (let [service-info (ServiceInfo/create service-type host port text)]
-    (. jmdns registerService service-info)))
+(defn reg-mdns-service [service-info]
+  (. jmdns registerService service-info))
 
-(defn unreg-all-mdns-service []
+(defn unreg-mdns-service [service-info]
+  (. jmdns unregisterService service-info))
+
+(defn unreg-all-mdns-services []
   (. jmdns unregisterAllServices))
 
 (defn discover [service-type]
@@ -25,7 +27,7 @@
 
 (comment
   (discover "_myapp._tcp.local.")
-  (reg-mdns-service "_myapp._tcp.local." "my-clj-mdns-service" 1234 "path=index.html")
-  (unreg-all-mdns-service)
+  (reg-mdns-service (ServiceInfo/create "_myapp._tcp.local." "my-clj-mdns-service" 1234 "path=index.html"))
+  (unreg-all-mdns-services)
   ;; 
   )
